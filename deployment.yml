@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: getip
+  labels:
+    app: getip
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: getip
+  template:
+    metadata:
+      labels:
+        app: getip
+    spec:
+      containers:
+        - name: getip
+          image: typ431127/getip:0.1.5
+          ports:
+            - containerPort: 8080
