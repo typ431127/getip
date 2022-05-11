@@ -58,7 +58,7 @@
 ```
 - Client-Ip: 程序获取到的IP
 - Header: 获取到的Header 头信息
-- RealIp: 通过X-Forwarded-For,X-Yestea-Forwarded-For 由程序获取到真实IP
+- RealIp: 通过X-Forwarded-For等header头，由程序获取到真实IP
 - Method: 请求方法
 - RequestURI: 请求url
 
