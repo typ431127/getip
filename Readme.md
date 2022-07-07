@@ -62,6 +62,11 @@
 - Method: 请求方法
 - RequestURI: 请求url
 
+#### 返回html页面
+```
+http://127.0.0.1:8080/?format=html
+```
+
 #### 启动
 ```shell
 ./app -port :8081
@@ -69,6 +74,6 @@
 
 #### docker运行
 ```shell
-docker run -itd -p 8087:8080 typ431127/getip:0.1.5
+docker run -itd -p 8087:8080 typ431127/getip:0.1.8
 ```
 realip库参考: https://github.com/tomasen/realip
