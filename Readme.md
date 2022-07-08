@@ -74,6 +74,6 @@ http://127.0.0.1:8080/?format=html
 
 #### docker运行
 ```shell
-docker run -itd -p 8087:8080 typ431127/getip:0.1.8
+docker run -itd -p 8087:8080 typ431127/getip:0.2.0
 ```
 realip库参考: https://github.com/tomasen/realip

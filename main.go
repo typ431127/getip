@@ -1,15 +1,20 @@
 package main
 
 import (
+	"embed"
 	"encoding/json"
 	"flag"
 	"fmt"
 	"getip/realip"
 	"github.com/gin-gonic/gin"
+	"html/template"
 	"net/http"
 )
 
 var port string
+
+//go:embed templates
+var tmpl embed.FS
 
 func response(c *gin.Context) {
 	format := c.DefaultQuery("format", "json")
@@ -57,7 +62,8 @@ func main() {
 	flag.Parse()
 	gin.SetMode(gin.DebugMode)
 	r := gin.Default()
-	r.LoadHTMLGlob("templates/*.tmpl")
+	t, _ := template.ParseFS(tmpl, "templates/*.tmpl")
+	r.SetHTMLTemplate(t)
 	v1 := r.Group("/")
 	{
 		v1.GET("/*action", response)
