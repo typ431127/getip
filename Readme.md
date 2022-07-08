@@ -77,3 +77,11 @@ http://127.0.0.1:8080/?format=html
 docker run -itd -p 8087:8080 typ431127/getip:0.2.0
 ```
 realip库参考: https://github.com/tomasen/realip
+
+#### 站长自己服务器验证
+https://ip.aityp.com/?format=html
+https://ip.aityp.com
+
+![image](https://user-images.githubusercontent.com/20376675/177923586-e4b6c71d-b9e6-4dfa-89e7-bd3e241d80b0.png)
+![image](https://user-images.githubusercontent.com/20376675/177923587-9e2f48d2-f349-4f3c-8a01-54a245b6770e.png)
+
