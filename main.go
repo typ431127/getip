@@ -8,7 +8,7 @@ import (
 	"getip/realip"
 	"github.com/gin-gonic/gin"
 	"html/template"
-	"net/http"
+	"strconv"
 )
 
 var port string
@@ -17,7 +17,12 @@ var port string
 var tmpl embed.FS
 
 func response(c *gin.Context) {
+	response_code := 200
 	format := c.DefaultQuery("format", "json")
+	http_code := c.DefaultQuery("http_code", "200")
+	if value, err := strconv.Atoi(http_code); err == nil {
+		response_code = value
+	}
 	ip := c.ClientIP()
 	djson := make(map[string]interface{})
 	content_type := c.GetHeader("Content-Type")
@@ -26,12 +31,13 @@ func response(c *gin.Context) {
 	}
 	RealIp := realip.FromRequest(c.Request)
 	response_json := make(map[string]interface{})
-	response_json["Client-Ip"] = ip
+	response_json["ClientIp"] = ip
 	response_json["RequestURI"] = c.Request.RequestURI
 	response_json["Header"] = c.Request.Header
 	response_json["Method"] = c.Request.Method
 	response_json["RealIp"] = RealIp
 	response_json["RequestJson"] = djson
+	response_json["Response_code"] = response_code
 	bytejson, _ := json.MarshalIndent(&djson, "", "  ")
 	fmt.Printf("============================================================================\n"+
 		"Header:%s\n"+
@@ -46,9 +52,9 @@ func response(c *gin.Context) {
 		c.Request.RemoteAddr)
 	fmt.Println("RequestJson:", string(bytejson))
 	if format == "json" {
-		c.JSON(200, response_json)
+		c.JSON(response_code, response_json)
 	} else {
-		c.HTML(http.StatusOK, "index.tmpl", gin.H{
+		c.HTML(response_code, "index.tmpl", gin.H{
 			"response_json": response_json,
 			"Header":        c.Request.Header,
 		})

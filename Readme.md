@@ -67,6 +67,13 @@
 http://127.0.0.1:8080/?format=html
 ```
 
+#### 指定返回状态码，测试不同状态码下网关处理逻辑
+```shell
+curl "http://127.0.0.1:8080?http_code=500" -I
+curl "http://127.0.0.1:8080?http_code=400" -I
+```
+- http_code 任意http状态码值
+
 #### 启动
 ```shell
 ./app -port :8081
@@ -74,13 +81,14 @@ http://127.0.0.1:8080/?format=html
 
 #### docker运行
 ```shell
-docker run -itd -p 8087:8080 typ431127/getip:0.2.0
+docker run -itd -p 8087:8080 typ431127/getip:0.2.1
 ```
 realip库参考: https://github.com/tomasen/realip
 
 #### 站长自己服务器验证
 https://ip.aityp.com/?format=html   
 https://ip.aityp.com   
+https://ip.aityp.com/?http_code=500
 
 ![image](https://user-images.githubusercontent.com/20376675/177923586-e4b6c71d-b9e6-4dfa-89e7-bd3e241d80b0.png)
 ![image](https://user-images.githubusercontent.com/20376675/177923587-9e2f48d2-f349-4f3c-8a01-54a245b6770e.png)
