@@ -10,9 +10,9 @@
 <body>
 <div class="container">
   <div class="row" style="margin-top: 20px;">
-  <h2 style="text-align: center;">ip address: {{ index  .response_json "Client-Ip" }}</h2>
+  <h2 style="text-align: center;">ip address: {{ index  .response_json "ClientIp" }}</h2>
     <ul class="list-group">
-      <li class="list-group-item">IP: {{ index  .response_json "Client-Ip" }}</li>
+      <li class="list-group-item">IP: {{ index  .response_json "ClientIp" }}</li>
       <li class="list-group-item">RealIp: {{ index  .response_json "RealIp" }}</li>
       <li class="list-group-item">Method: {{ index  .response_json "Method" }}</li>
       <li class="list-group-item">RequestURI: {{ index  .response_json "RequestURI" }}</li>
