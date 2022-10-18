@@ -4,10 +4,10 @@ import (
 	"embed"
 	"encoding/json"
 	"flag"
-	"fmt"
 	"getip/realip"
 	"github.com/gin-gonic/gin"
 	"html/template"
+	"log"
 	"strconv"
 )
 
@@ -17,6 +17,8 @@ var port string
 var tmpl embed.FS
 
 func response(c *gin.Context) {
+	c.Request.ParseForm()
+	c.Request.ParseMultipartForm(33554432)
 	response_code := 200
 	format := c.DefaultQuery("format", "json")
 	http_code := c.DefaultQuery("http_code", "200")
@@ -37,20 +39,29 @@ func response(c *gin.Context) {
 	response_json["Method"] = c.Request.Method
 	response_json["RealIp"] = RealIp
 	response_json["RequestJson"] = djson
+	response_json["RequestPostForm"] = c.Request.PostForm
 	response_json["Response_code"] = response_code
+	response_json["Content-Type"] = c.Request.Header.Get("Content-Type")
 	bytejson, _ := json.MarshalIndent(&djson, "", "  ")
-	fmt.Printf("============================================================================\n"+
+	log.Printf("\n============================================================================\n"+
 		"Header:%s\n"+
+		"IP:%s\n"+
 		"X-Forwarded-For:%s\n"+
 		"X-Real-Ip:%s\n"+
 		"X-Forwarded-Host:%s\n"+
-		"RemoteAddr:%s\n",
+		"RemoteAddr:%s\n"+
+		"Content-Type:%s\n"+
+		"RequestJson::%s\n"+
+		"RequestPostForm::%s\n",
 		c.Request.Header,
+		c.ClientIP(),
 		c.Request.Header.Get("X-Forwarded-For"),
 		c.Request.Header.Get("X-Real-Ip"),
 		c.Request.Header.Get("X-Forwarded-Host:"),
-		c.Request.RemoteAddr)
-	fmt.Println("RequestJson:", string(bytejson))
+		c.Request.RemoteAddr,
+		c.Request.Header.Get("Content-Type"),
+		string(bytejson),
+		c.Request.PostForm)
 	if format == "json" {
 		c.JSON(response_code, response_json)
 	} else {
@@ -71,13 +82,11 @@ func main() {
 	t, _ := template.ParseFS(tmpl, "templates/*.tmpl")
 	r.SetHTMLTemplate(t)
 	v1 := r.Group("/")
-	{
-		v1.GET("/*action", response)
-		v1.HEAD("/*action", response)
-		v1.POST("/*action", response)
-		v1.PUT("/*action", response)
-		v1.DELETE("/*action", response)
-		v1.OPTIONS("/*action", response)
-	}
+	v1.GET("/*router", response)
+	v1.HEAD("/*router", response)
+	v1.POST("/*router", response)
+	v1.PUT("/*router", response)
+	v1.DELETE("/*router", response)
+	v1.OPTIONS("/*router", response)
 	r.Run(port)
 }
