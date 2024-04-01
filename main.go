@@ -8,10 +8,13 @@ import (
 	"github.com/gin-gonic/gin"
 	"html/template"
 	"log"
+	"os"
 	"strconv"
 )
 
 var port string
+var Hostname string
+var ShowHostname bool
 
 //go:embed templates
 var tmpl embed.FS
@@ -19,29 +22,33 @@ var tmpl embed.FS
 func response(c *gin.Context) {
 	c.Request.ParseForm()
 	c.Request.ParseMultipartForm(33554432)
-	response_code := 200
+	responseCode := 200
 	format := c.DefaultQuery("format", "json")
-	http_code := c.DefaultQuery("http_code", "200")
-	if value, err := strconv.Atoi(http_code); err == nil {
-		response_code = value
+	httpCode := c.DefaultQuery("http_code", "200")
+	if value, err := strconv.Atoi(httpCode); err == nil {
+		responseCode = value
 	}
 	ip := c.ClientIP()
 	djson := make(map[string]interface{})
-	content_type := c.GetHeader("Content-Type")
-	if err := c.ShouldBindJSON(&djson); err != nil && content_type == "application/json" {
+	contentType := c.GetHeader("Content-Type")
+	if err := c.ShouldBindJSON(&djson); err != nil && contentType == "application/json" {
 		djson["message"] = "Submit json format error"
 	}
 	RealIp := realip.FromRequest(c.Request)
-	response_json := make(map[string]interface{})
-	response_json["ClientIp"] = ip
-	response_json["RequestURI"] = c.Request.RequestURI
-	response_json["Header"] = c.Request.Header
-	response_json["Method"] = c.Request.Method
-	response_json["RealIp"] = RealIp
-	response_json["RequestJson"] = djson
-	response_json["RequestPostForm"] = c.Request.PostForm
-	response_json["Response_code"] = response_code
-	response_json["Content-Type"] = c.Request.Header.Get("Content-Type")
+	responseJson := make(map[string]interface{})
+	responseJson["ClientIp"] = ip
+	responseJson["RequestURI"] = c.Request.RequestURI
+	responseJson["Header"] = c.Request.Header
+	responseJson["Method"] = c.Request.Method
+	responseJson["RealIp"] = RealIp
+	responseJson["RequestJson"] = djson
+	responseJson["RequestPostForm"] = c.Request.PostForm
+	responseJson["Response_code"] = responseCode
+	responseJson["Content-Type"] = c.Request.Header.Get("Content-Type")
+	//
+	if ShowHostname {
+		responseJson["Hostname"] = Hostname
+	}
 	bytejson, _ := json.MarshalIndent(&djson, "", "  ")
 	log.Printf("\n============================================================================\n"+
 		"Header:%s\n"+
@@ -63,20 +70,24 @@ func response(c *gin.Context) {
 		string(bytejson),
 		c.Request.PostForm)
 	if format == "json" {
-		c.JSON(response_code, response_json)
+		c.JSON(responseCode, responseJson)
 	} else {
-		c.HTML(response_code, "index.tmpl", gin.H{
-			"response_json": response_json,
+		c.HTML(responseCode, "index.tmpl", gin.H{
+			"response_json": responseJson,
 			"Header":        c.Request.Header,
 		})
 	}
 }
 
 func init() {
+	flag.BoolVar(&ShowHostname, "hostname", false, "返回json中显示主机名")
 	flag.StringVar(&port, "port", ":8080", "端口")
 }
 func main() {
 	flag.Parse()
+	if ShowHostname {
+		Hostname, _ = os.Hostname()
+	}
 	gin.SetMode(gin.DebugMode)
 	r := gin.Default()
 	t, _ := template.ParseFS(tmpl, "templates/*.tmpl")
