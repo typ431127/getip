@@ -96,7 +96,11 @@ curl "http://127.0.0.1:8080?http_code=400" -I
 
 #### docker运行
 ```shell
-docker run -itd -p 8087:8080 typ431127/getip:0.2.2
+docker run -itd -p 8087:8080 typ431127/getip:0.2.4
+```
+#### 返回结果中显示hostname,容器中调试开启
+```shell
+docker run -itd -p 8087:8080 typ431127/getip:0.2.4 -hostname
 ```
 realip库参考: https://github.com/tomasen/realip
 
