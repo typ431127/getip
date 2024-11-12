@@ -108,6 +108,8 @@ realip库参考: https://github.com/tomasen/realip
 https://ip.aityp.com/?format=html   
 https://ip.aityp.com   
 https://ip.aityp.com/?http_code=500
+#### 经过cloudflare代理的IP获取验证
+https://cf-ip.aityp.com/
 
 #### post表单提交验证
 ```shell
